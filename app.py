@@ -10,7 +10,7 @@ def get_db_connection():
     return mariadb.connect(
         host="10.200.14.18",
         user="webuser",
-        password="IMI2026*",
+        password="*",
         database="skole_fravaer_db",
     )
 
