@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Skole fraværssystem{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <nav>
+        <h2>Skole fraværssystem</h2>
+
+        <div>
+            <a href="/">Hjem</a>
+            <a href="/elever">Elever</a>
+            <a href="/legg-til-elev">Legg til elev</a>
+            <a href="/registrer-fravaer">Registrer fravær</a>
+            <a href="/fravaer">Fravær</a>
+            <a href="/faq">FAQ</a>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>Laget av Stefanos Gkiokas</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

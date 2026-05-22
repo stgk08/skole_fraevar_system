@@ -1,0 +1,334 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #222;
+}
+
+/* Navbar */
+nav {
+    background-color: #1e293b;
+    color: white;
+    padding: 16px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+nav h2 {
+    margin: 0;
+    font-size: clamp(20px, 2vw, 30px);
+    white-space: nowrap;
+}
+
+nav div {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: clamp(14px, 1.2vw, 17px);
+}
+
+nav a:hover {
+    background-color: #334155;
+}
+
+/* Hovedinnhold */
+main {
+    width: min(1200px, 90%);
+    margin: 0 auto;
+    padding: 40px 0;
+    min-height: 80vh;
+}
+
+footer {
+    background-color: #1e293b;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+h1 {
+    margin-top: 0;
+    font-size: clamp(28px, 4vw, 48px);
+}
+
+h3 {
+    font-size: clamp(20px, 2vw, 26px);
+}
+
+p {
+    font-size: clamp(16px, 1.5vw, 19px);
+    line-height: 1.6;
+}
+
+/* Forside */
+.hero {
+    background-color: white;
+    padding: clamp(25px, 4vw, 50px);
+    border-radius: 14px;
+    max-width: 900px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 11px 18px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #1d4ed8;
+}
+
+.green {
+    background-color: #16a34a;
+}
+
+.green:hover {
+    background-color: #15803d;
+}
+
+/* Cards */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-top: 25px;
+}
+
+.card {
+    background-color: white;
+    padding: 22px;
+    border-radius: 12px;
+    border-left: 5px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+/* Tabeller */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #d1d5db;
+    padding: 12px;
+    text-align: left;
+    font-size: 15px;
+}
+
+th {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* Skjema */
+form {
+    background-color: white;
+    padding: clamp(20px, 3vw, 35px);
+    width: min(500px, 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 11px;
+    margin-top: 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 16px;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+button {
+    margin-top: 18px;
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #15803d;
+}
+
+/* Slett-knapp */
+.delete-btn {
+    background-color: #dc2626;
+    color: white;
+    padding: 7px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.delete-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* FAQ */
+.faq-box {
+    background-color: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 5px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.faq-box h3 {
+    margin-top: 0;
+}
+
+.big-number {
+    font-size: 42px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.small-btn {
+    padding: 7px 12px;
+    font-size: 14px;
+}
+
+/* Vanlige små skjermer */
+@media (max-width: 800px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav div {
+        justify-content: flex-start;
+    }
+
+    nav a {
+        background-color: #334155;
+    }
+
+    main {
+        width: 92%;
+        padding: 25px 0;
+    }
+
+    .hero {
+        padding: 25px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Ekstra små mobiler */
+@media (max-width: 480px) {
+    nav {
+        padding: 14px 20px;
+    }
+
+    nav div {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    nav a {
+        width: 100%;
+        text-align: center;
+    }
+
+    th, td {
+        padding: 9px;
+        font-size: 14px;
+    }
+
+    footer {
+        font-size: 14px;
+    }
+}
+
+/* Store skjermer / projektor */
+@media (min-width: 1400px) {
+    main {
+        width: min(1300px, 85%);
+    }
+
+    .hero {
+        max-width: 1000px;
+    }
+
+    th, td {
+        font-size: 17px;
+        padding: 15px;
+    }
+
+    .btn, button {
+        font-size: 18px;
+        padding: 13px 22px;
+    }
+}

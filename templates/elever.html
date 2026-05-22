@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Elever{% endblock %}
+
+{% block content %}
+
+<h1>Elevliste</h1>
+
+<a class="btn" href="/legg-til-elev">Legg til ny elev</a>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Fornavn</th>
+        <th>Etternavn</th>
+        <th>Klasse</th>
+        <th>Handling</th>
+    </tr>
+
+    {% for elev in elever %}
+    <tr>
+        <td>{{ elev.id }}</td>
+        <td>{{ elev.fornavn }}</td>
+        <td>{{ elev.etternavn }}</td>
+        <td>{{ elev.klasse }}</td>
+        <td>
+            <a class="delete-btn" href="/slett-elev/{{ elev.id }}" onclick="return confirmDelete()">
+                Slett
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

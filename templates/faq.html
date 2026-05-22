@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
+
+<h1>FAQ</h1>
+
+<div class="faq-box">
+    <h3>Hva er dette systemet?</h3>
+    <p>
+        Dette er et skole-fraværssystem som kan brukes til å registrere elever og fravær.
+    </p>
+</div>
+
+<div class="faq-box">
+    <h3>Hvilken teknologi bruker prosjektet?</h3>
+    <p>
+        Prosjektet bruker Flask som backend, MariaDB som database, og HTML/CSS/JavaScript som frontend.
+    </p>
+</div>
+
+<div class="faq-box">
+    <h3>Hvordan lagres dataene?</h3>
+    <p>
+        Dataene lagres i en SQL-database. Elever, klasser, fag og fravær ligger i egne tabeller.
+    </p>
+</div>
+
+<div class="faq-box">
+    <h3>Hvilke SQL-funksjoner viser prosjektet?</h3>
+    <p>
+        Prosjektet viser CREATE TABLE, INSERT, SELECT, DELETE, FOREIGN KEY og JOIN.
+    </p>
+</div>
+
+<div class="faq-box">
+    <h3>Hva kan forbedres videre?</h3>
+    <p>
+        Systemet kan forbedres med innlogging, lærerroller, søkefunksjon og fraværsprosent.
+    </p>
+</div>
+
+{% endblock %}

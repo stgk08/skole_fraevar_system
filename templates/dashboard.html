@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<p>Her får du en enkel oversikt over dataene i systemet.</p>
+
+<section class="cards">
+    <div class="card">
+        <h3>Antall elever</h3>
+        <p class="big-number">{{ antall_elever }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Antall fravær</h3>
+        <p class="big-number">{{ antall_fravaer }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Antall fag</h3>
+        <p class="big-number">{{ antall_fag }}</p>
+    </div>
+</section>
+
+{% endblock %}

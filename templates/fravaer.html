@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Fravær{% endblock %}
+
+{% block content %}
+
+<h1>Registrert fravær</h1>
+
+<a class="btn" href="/registrer-fravaer">Registrer nytt fravær</a>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Elev</th>
+        <th>Fag</th>
+        <th>Dato</th>
+        <th>Status</th>
+        <th>Kommentar</th>
+    </tr>
+
+    {% for f in fravaer %}
+    <tr>
+        <td>{{ f.id }}</td>
+        <td>{{ f.fornavn }} {{ f.etternavn }}</td>
+        <td>{{ f.fag }}</td>
+        <td>{{ f.dato }}</td>
+        <td>{{ f.status }}</td>
+        <td>{{ f.kommentar }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

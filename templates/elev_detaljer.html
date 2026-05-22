@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Elev detaljer{% endblock %}
+
+{% block content %}
+
+{% if elev %}
+
+<h1>{{ elev.fornavn }} {{ elev.etternavn }}</h1>
+
+<div class="card">
+    <h3>Elevinformasjon</h3>
+    <p><strong>ID:</strong> {{ elev.id }}</p>
+    <p><strong>Klasse:</strong> {{ elev.klasse }}</p>
+</div>
+
+<h2>Fravær for denne eleven</h2>
+
+<table>
+    <tr>
+        <th>Fag</th>
+        <th>Dato</th>
+        <th>Status</th>
+        <th>Kommentar</th>
+    </tr>
+
+    {% for f in fravaer %}
+    <tr>
+        <td>{{ f.fag }}</td>
+        <td>{{ f.dato }}</td>
+        <td>{{ f.status }}</td>
+        <td>{{ f.kommentar }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+
+<h1>Elev ikke funnet</h1>
+<p>Denne eleven finnes ikke i databasen.</p>
+
+{% endif %}
+
+<br>
+<a class="btn" href="/elever">Tilbake til elever</a>
+
+{% endblock %}

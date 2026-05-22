@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Hjem{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <h1>Velkommen til skole-fraværssystemet</h1>
+
+    <p>
+        Dette er et enkelt system laget med Flask, HTML, CSS og MariaDB.
+        Systemet kan vise elever, legge til elever og registrere fravær.
+    </p>
+
+    <div class="button-group">
+        <a class="btn" href="/elever">Se elever</a>
+        <a class="btn green" href="/registrer-fravaer">Registrer fravær</a>
+    </div>
+</section>
+
+<section class="cards">
+    <div class="card">
+        <h3>Elever</h3>
+        <p>Viser elever fra databasen med klasse.</p>
+    </div>
+
+    <div class="card">
+        <h3>Fravær</h3>
+        <p>Registrerer fravær per elev og fag.</p>
+    </div>
+
+    <div class="card">
+        <h3>SQL</h3>
+        <p>Bruker tabeller, foreign key og JOIN.</p>
+    </div>
+</section>
+
+{% endblock %}

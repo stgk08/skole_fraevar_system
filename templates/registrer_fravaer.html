@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Registrer fravær{% endblock %}
+
+{% block content %}
+
+<h1>Registrer fravær</h1>
+
+<form method="POST">
+    <label>Velg elev:</label>
+    <select name="elev_id" required>
+        {% for elev in elever %}
+            <option value="{{ elev.id }}">
+                {{ elev.fornavn }} {{ elev.etternavn }} - {{ elev.klasse }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Velg fag:</label>
+    <select name="fag_id" required>
+        {% for f in fag %}
+            <option value="{{ f.id }}">{{ f.navn }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Dato:</label>
+    <input type="date" name="dato" required>
+
+    <label>Status:</label>
+    <select name="status" required>
+        <option value="Fravær">Fravær</option>
+        <option value="For sent">For sent</option>
+        <option value="Dokumentert">Dokumentert</option>
+    </select>
+
+    <label>Kommentar:</label>
+    <textarea name="kommentar" placeholder="Skriv eventuell kommentar"></textarea>
+
+    <button type="submit">Registrer fravær</button>
+</form>
+
+{% endblock %}

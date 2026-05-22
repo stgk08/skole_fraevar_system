@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Legg til elev{% endblock %}
+
+{% block content %}
+
+<h1>Legg til ny elev</h1>
+
+<form method="POST">
+    <label>Fornavn:</label>
+    <input type="text" name="fornavn" required>
+
+    <label>Etternavn:</label>
+    <input type="text" name="etternavn" required>
+
+    <label>Klasse:</label>
+    <select name="klasse_id" required>
+        {% for klasse in klasser %}
+            <option value="{{ klasse.id }}">{{ klasse.navn }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Lagre elev</button>
+</form>
+
+{% endblock %}
