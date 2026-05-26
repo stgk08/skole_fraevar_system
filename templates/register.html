@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Registrer bruker{% endblock %}
+
+{% block content %}
+
+<h1>Registrer bruker</h1>
+
+<p>Lag en ny bruker for å få tilgang til systemet.</p>
+
+{% if error %}
+    <div class="error-box">
+        {{ error }}
+    </div>
+{% endif %}
+
+<form method="POST">
+    <label>Brukernavn:</label>
+    <input type="text" name="brukernavn" required>
+
+    <label>Passord:</label>
+    <input type="password" name="passord" required>
+
+    <button type="submit">Registrer</button>
+</form>
+
+<p>
+    Har du allerede bruker?
+    <a href="/login">Logg inn her</a>
+</p>
+
+{% endblock %}
