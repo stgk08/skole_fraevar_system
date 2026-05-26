@@ -247,34 +247,6 @@ def fravaer():
 
     return render_template("fravaer.html", fravaer=fravaer_liste)
 
-# Enkel admin-side
-@app.route("/admin")
-def admin():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    cursor.execute("""
-        SELECT 
-            fravaer.id,
-            elever.fornavn,
-            elever.etternavn,
-            fag.navn AS fag,
-            fravaer.dato,
-            fravaer.status,
-            fravaer.kommentar
-        FROM fravaer
-        JOIN elever ON fravaer.elev_id = elever.id
-        JOIN fag ON fravaer.fag_id = fag.id
-        ORDER BY fravaer.dato DESC
-    """)
-
-    fravaer_liste = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return render_template("admin.html", fravaer=fravaer_liste)
-
 
 # FAQ-side
 @app.route("/faq")
