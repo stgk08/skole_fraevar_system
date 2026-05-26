@@ -13,44 +13,82 @@ body {
     color: #222;
 }
 
-/* Navbar */
-nav {
+/* NAVBAR */
+.navbar {
     background-color: #1e293b;
     color: white;
-    padding: 16px 5%;
+    padding: 18px 5%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    justify-content: space-between;
+    gap: 25px;
+    flex-wrap: wrap;
 }
 
-nav h2 {
-    margin: 0;
-    font-size: clamp(20px, 2vw, 30px);
+.nav-logo a {
+    color: white;
+    text-decoration: none;
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 800;
     white-space: nowrap;
 }
 
-nav div {
+.nav-links {
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex: 1;
+}
+
+.nav-auth {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
-nav a {
+.nav-links a,
+.nav-auth a {
     color: white;
     text-decoration: none;
-    font-weight: bold;
-    padding: 8px 10px;
-    border-radius: 6px;
-    font-size: clamp(14px, 1.2vw, 17px);
+    font-weight: 700;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.2s ease;
 }
 
-nav a:hover {
+.nav-links a:hover,
+.nav-auth a:hover {
     background-color: #334155;
 }
 
-/* Hovedinnhold */
+.register-link {
+    background-color: #2563eb;
+}
+
+.register-link:hover {
+    background-color: #1d4ed8 !important;
+}
+
+.logout-link {
+    background-color: #dc2626;
+}
+
+.logout-link:hover {
+    background-color: #b91c1c !important;
+}
+
+.nav-user {
+    color: #cbd5e1;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* MAIN */
 main {
     width: min(1200px, 90%);
     margin: 0 auto;
@@ -67,7 +105,11 @@ footer {
 
 h1 {
     margin-top: 0;
-    font-size: clamp(28px, 4vw, 48px);
+    font-size: clamp(28px, 4vw, 46px);
+}
+
+h2 {
+    font-size: clamp(24px, 3vw, 34px);
 }
 
 h3 {
@@ -79,22 +121,27 @@ p {
     line-height: 1.6;
 }
 
-/* Forside */
+/* FORSIDE */
 .hero {
     background-color: white;
     padding: clamp(25px, 4vw, 50px);
-    border-radius: 14px;
+    border-radius: 16px;
     max-width: 900px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.hero p {
+    max-width: 750px;
 }
 
 .button-group {
-    margin-top: 20px;
+    margin-top: 22px;
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
 }
 
+/* BUTTONS */
 .btn {
     display: inline-block;
     background-color: #2563eb;
@@ -106,6 +153,7 @@ p {
     font-size: 16px;
     border: none;
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .btn:hover {
@@ -120,7 +168,28 @@ p {
     background-color: #15803d;
 }
 
-/* Cards */
+.small-btn {
+    padding: 7px 12px;
+    font-size: 14px;
+}
+
+.delete-btn {
+    display: inline-block;
+    background-color: #dc2626;
+    color: white;
+    padding: 7px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* CARDS */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -131,30 +200,40 @@ p {
 .card {
     background-color: white;
     padding: 22px;
-    border-radius: 12px;
+    border-radius: 14px;
     border-left: 5px solid #2563eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
 .card h3 {
     margin-top: 0;
 }
 
-/* Tabeller */
+.big-number {
+    font-size: 42px;
+    font-weight: bold;
+    color: #2563eb;
+    margin: 0;
+}
+
+/* TABLES */
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
     margin-top: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
-th, td {
+th,
+td {
     border: 1px solid #d1d5db;
     padding: 12px;
     text-align: left;
     font-size: 15px;
+    vertical-align: top;
 }
 
 th {
@@ -162,13 +241,18 @@ th {
     color: white;
 }
 
-/* Skjema */
+tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+/* FORMS */
 form {
     background-color: white;
     padding: clamp(20px, 3vw, 35px);
-    width: min(500px, 100%);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: min(520px, 100%);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    margin-top: 20px;
 }
 
 label {
@@ -177,13 +261,23 @@ label {
     font-weight: bold;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     width: 100%;
     padding: 11px;
     margin-top: 6px;
     border: 1px solid #cbd5e1;
     border-radius: 7px;
     font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #2563eb;
+    border-color: #2563eb;
 }
 
 textarea {
@@ -201,36 +295,28 @@ button {
     cursor: pointer;
     font-weight: bold;
     font-size: 16px;
+    transition: 0.2s ease;
 }
 
 button:hover {
     background-color: #15803d;
 }
 
-/* Slett-knapp */
-.delete-btn {
-    background-color: #dc2626;
-    color: white;
-    padding: 7px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.delete-btn:hover {
-    background-color: #b91c1c;
-}
-
 /* FAQ */
 .faq-box {
     background-color: white;
     padding: 22px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 15px;
     border-left: 5px solid #2563eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
+.faq-box h3 {
+    margin-top: 0;
+}
+
+/* ERROR */
 .error-box {
     background-color: #fee2e2;
     color: #991b1b;
@@ -238,36 +324,53 @@ button:hover {
     border-radius: 8px;
     margin-bottom: 15px;
     border-left: 5px solid #dc2626;
-}
-
-.faq-box h3 {
-    margin-top: 0;
-}
-
-.big-number {
-    font-size: 42px;
     font-weight: bold;
-    color: #2563eb;
 }
 
-.small-btn {
-    padding: 7px 12px;
-    font-size: 14px;
+/* SUCCESS / INFO BOX OPTIONAL */
+.info-box {
+    background-color: #dbeafe;
+    color: #1e40af;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 5px solid #2563eb;
 }
 
-/* Vanlige små skjermer */
-@media (max-width: 800px) {
-    nav {
+/* ADMIN FAQ TABLE FORMS */
+td form {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+td textarea {
+    min-height: 70px;
+}
+
+/* RESPONSIVE - TABLET */
+@media (max-width: 900px) {
+    .navbar {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        padding: 18px 20px;
     }
 
-    nav div {
-        justify-content: flex-start;
+    .nav-logo {
+        text-align: center;
     }
 
-    nav a {
+    .nav-links,
+    .nav-auth {
+        justify-content: center;
+    }
+
+    .nav-links a,
+    .nav-auth a {
         background-color: #334155;
+        text-align: center;
     }
 
     main {
@@ -295,25 +398,31 @@ button:hover {
     }
 }
 
-/* Ekstra små mobiler */
+/* RESPONSIVE - MOBILE */
 @media (max-width: 480px) {
-    nav {
-        padding: 14px 20px;
-    }
-
-    nav div {
-        width: 100%;
+    .nav-links,
+    .nav-auth {
         flex-direction: column;
-    }
-
-    nav a {
         width: 100%;
-        text-align: center;
     }
 
-    th, td {
+    .nav-links a,
+    .nav-auth a {
+        width: 100%;
+    }
+
+    main {
+        width: 94%;
+    }
+
+    th,
+    td {
         padding: 9px;
         font-size: 14px;
+    }
+
+    form {
+        padding: 18px;
     }
 
     footer {
@@ -321,7 +430,7 @@ button:hover {
     }
 }
 
-/* Store skjermer / projektor */
+/* LARGE SCREENS */
 @media (min-width: 1400px) {
     main {
         width: min(1300px, 85%);
@@ -331,12 +440,14 @@ button:hover {
         max-width: 1000px;
     }
 
-    th, td {
+    th,
+    td {
         font-size: 17px;
         padding: 15px;
     }
 
-    .btn, button {
+    .btn,
+    button {
         font-size: 18px;
         padding: 13px 22px;
     }
