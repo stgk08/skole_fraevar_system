@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
+from werkzeug.security import generate_password_hash, check_password_hash
 import mariadb
 
 app = Flask(__name__)
 
+# Brukes for login-session
+app.secret_key = "*"
+
 
 # Databasekobling
-# Denne funksjonen brukes hver gang appen skal hente eller lagre data
 def get_db_connection():
     return mariadb.connect(
         host="10.200.14.18",
@@ -15,16 +18,97 @@ def get_db_connection():
     )
 
 
-
 # Forside
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
+# Register-side
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        brukernavn = request.form["brukernavn"]
+        passord = request.form["passord"]
+
+        passord_hash = generate_password_hash(passord)
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+            cursor.execute("""
+                INSERT INTO brukere (brukernavn, passord_hash, rolle)
+                VALUES (?, ?, ?)
+            """, (brukernavn, passord_hash, "bruker"))
+
+            conn.commit()
+
+            cursor.close()
+            conn.close()
+
+            return redirect("/login")
+
+        except mariadb.IntegrityError:
+            cursor.close()
+            conn.close()
+
+            return render_template(
+                "register.html",
+                error="Brukernavnet finnes allerede."
+            )
+
+    return render_template("register.html")
+
+
+# Login-side
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        brukernavn = request.form["brukernavn"]
+        passord = request.form["passord"]
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT * FROM brukere
+            WHERE brukernavn = ?
+        """, (brukernavn,))
+
+        bruker = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if bruker and check_password_hash(bruker["passord_hash"], passord):
+            session["bruker_id"] = bruker["id"]
+            session["brukernavn"] = bruker["brukernavn"]
+            session["rolle"] = bruker["rolle"]
+
+            return redirect("/dashboard")
+
+        return render_template(
+            "login.html",
+            error="Feil brukernavn eller passord."
+        )
+
+    return render_template("login.html")
+
+
+# Logg ut
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
 # Dashboard med enkel statistikk
 @app.route("/dashboard")
 def dashboard():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -51,6 +135,9 @@ def dashboard():
 # Viser alle elever
 @app.route("/elever")
 def elever():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -76,6 +163,9 @@ def elever():
 # Legg til ny elev
 @app.route("/legg-til-elev", methods=["GET", "POST"])
 def legg_til_elev():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -108,13 +198,13 @@ def legg_til_elev():
 # Slett elev
 @app.route("/slett-elev/<int:id>")
 def slett_elev(id):
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Sletter først fravær som hører til eleven
     cursor.execute("DELETE FROM fravaer WHERE elev_id = ?", (id,))
-
-    # Deretter sletter vi selve eleven
     cursor.execute("DELETE FROM elever WHERE id = ?", (id,))
 
     conn.commit()
@@ -128,6 +218,9 @@ def slett_elev(id):
 # Viser detaljer for én elev
 @app.route("/elev/<int:id>")
 def elev_detaljer(id):
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -171,6 +264,9 @@ def elev_detaljer(id):
 # Registrer fravær
 @app.route("/registrer-fravaer", methods=["GET", "POST"])
 def registrer_fravaer():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -222,6 +318,9 @@ def registrer_fravaer():
 # Viser alt registrert fravær
 @app.route("/fravaer")
 def fravaer():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -246,6 +345,38 @@ def fravaer():
     conn.close()
 
     return render_template("fravaer.html", fravaer=fravaer_liste)
+
+
+# Enkel admin-side
+@app.route("/admin")
+def admin():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            fravaer.id,
+            elever.fornavn,
+            elever.etternavn,
+            fag.navn AS fag,
+            fravaer.dato,
+            fravaer.status,
+            fravaer.kommentar
+        FROM fravaer
+        JOIN elever ON fravaer.elev_id = elever.id
+        JOIN fag ON fravaer.fag_id = fag.id
+        ORDER BY fravaer.dato DESC
+    """)
+
+    fravaer_liste = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template("admin.html", fravaer=fravaer_liste)
 
 
 # FAQ-side
