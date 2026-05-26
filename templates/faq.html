@@ -4,71 +4,55 @@
 
 {% block content %}
 
-<h1>FAQ - Hvordan bruke appen</h1>
+<h1>FAQ - Hjelp og spørsmål</h1>
+
+<p>
+    Her finner du vanlige spørsmål om hvordan man bruker skole-fraværssystemet.
+    Du kan også sende inn ditt eget spørsmål nederst på siden.
+</p>
 
 <div class="faq-box">
     <h3>Hvordan ser jeg alle elever?</h3>
-    <p>
-        Trykk på <strong>Elever</strong> i navbaren. Der får du en tabell med alle elever som er lagret i databasen.
-    </p>
+    <p>Trykk på <strong>Elever</strong> i navbaren. Der ser du alle elever i databasen.</p>
 </div>
 
 <div class="faq-box">
     <h3>Hvordan legger jeg til en ny elev?</h3>
-    <p>
-        Trykk på <strong>Legg til elev</strong>. Skriv inn fornavn og etternavn, velg klasse, og trykk på <strong>Lagre elev</strong>.
-    </p>
+    <p>Trykk på <strong>Legg til elev</strong>, fyll inn skjemaet og trykk på lagre.</p>
 </div>
 
 <div class="faq-box">
     <h3>Hvordan registrerer jeg fravær?</h3>
-    <p>
-        Trykk på <strong>Registrer fravær</strong>. Velg elev, fag, dato og status, skriv eventuelt en kommentar, og trykk på <strong>Registrer fravær</strong>.
-    </p>
+    <p>Trykk på <strong>Registrer fravær</strong>, velg elev, fag, dato og status.</p>
 </div>
 
 <div class="faq-box">
-    <h3>Hvordan ser jeg alt registrert fravær?</h3>
-    <p>
-        Trykk på <strong>Fravær</strong> i navbaren. Der vises alt fravær med elevnavn, fag, dato, status og kommentar.
-    </p>
+    <h3>Hvordan ser jeg fraværet?</h3>
+    <p>Trykk på <strong>Fravær</strong>. Der vises alt registrert fravær i en tabell.</p>
 </div>
 
-<div class="faq-box">
-    <h3>Hvordan ser jeg detaljer om én elev?</h3>
-    <p>
-        Gå til <strong>Elever</strong> og trykk på <strong>Se detaljer</strong> ved siden av eleven. Da får du se elevens informasjon og fraværet som er registrert på den eleven.
-    </p>
-</div>
+<h2>Spørsmål fra brukere</h2>
 
-<div class="faq-box">
-    <h3>Hvordan sletter jeg en elev?</h3>
-    <p>
-        Gå til <strong>Elever</strong> og trykk på <strong>Slett</strong> ved siden av eleven. Appen spør om du er sikker før eleven slettes.
-    </p>
-</div>
+{% for f in faq_liste %}
+    <div class="faq-box">
+        <h3>{{ f.sporsmal }}</h3>
+        <p>{{ f.svar }}</p>
+    </div>
+{% endfor %}
 
-<div class="faq-box">
-    <h3>Hva viser dashboardet?</h3>
-    <p>
-        Dashboardet viser en enkel oversikt over systemet. Der kan du se antall elever, antall fravær og antall fag som finnes i databasen.
-    </p>
-</div>
+<h2>Send inn et spørsmål</h2>
 
-<div class="faq-box">
-    <h3>Hva brukes admin-siden til?</h3>
-    <p>
-        Admin-siden viser en samlet oversikt over registrert fravær. Den kan senere bygges videre med innlogging, redigering og flere admin-funksjoner.
-    </p>
-</div>
+<form method="POST">
+    <label>Navn:</label>
+    <input type="text" name="navn" required>
 
-<div class="faq-box">
-    <h3>Hva betyr statusene i fravær?</h3>
-    <p>
-        <strong>Fravær</strong> betyr at eleven ikke var til stede. 
-        <strong>For sent</strong> betyr at eleven kom etter timen startet. 
-        <strong>Dokumentert</strong> betyr at fraværet har en gyldig forklaring.
-    </p>
-</div>
+    <label>E-post:</label>
+    <input type="email" name="epost" required>
+
+    <label>Spørsmål:</label>
+    <textarea name="sporsmal" required placeholder="Skriv spørsmålet ditt her"></textarea>
+
+    <button type="submit">Send spørsmål</button>
+</form>
 
 {% endblock %}
