@@ -1,21 +1,34 @@
 from flask import Flask, render_template, request, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import mariadb
+import hashlib
 
 app = Flask(__name__)
 
 # Brukes for login-session
-app.secret_key = "*"
-
+app.secret_key = "superhemmeligkey123"
 
 # Databasekobling
 def get_db_connection():
     return mariadb.connect(
         host="10.200.14.18",
         user="webuser",
-        password="*",
+        password="IMIKuben1337!",
         database="skole_fravaer_db",
     )
+
+
+# Gjør tekst om til hash
+def hash_text(text):
+    if text is None or text == "":
+        return None
+
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+# Sjekker om brukeren er admin
+def er_admin():
+    return session.get("rolle") == "admin"
 
 
 # Forside
@@ -24,7 +37,7 @@ def index():
     return render_template("index.html")
 
 
-# Register-side
+# Registrer bruker
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -61,7 +74,7 @@ def register():
     return render_template("register.html")
 
 
-# Login-side
+# Logg inn
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -72,7 +85,8 @@ def login():
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT * FROM brukere
+            SELECT *
+            FROM brukere
             WHERE brukernavn = ?
         """, (brukernavn,))
 
@@ -103,7 +117,7 @@ def logout():
     return redirect("/")
 
 
-# Dashboard med enkel statistikk
+# Dashboard
 @app.route("/dashboard")
 def dashboard():
     if "bruker_id" not in session:
@@ -160,7 +174,7 @@ def elever():
     return render_template("elever.html", elever=elever_liste)
 
 
-# Legg til ny elev
+# Legg til elev
 @app.route("/legg-til-elev", methods=["GET", "POST"])
 def legg_til_elev():
     if "bruker_id" not in session:
@@ -215,7 +229,7 @@ def slett_elev(id):
     return redirect("/elever")
 
 
-# Viser detaljer for én elev
+# Elevdetaljer
 @app.route("/elev/<int:id>")
 def elev_detaljer(id):
     if "bruker_id" not in session:
@@ -315,7 +329,7 @@ def registrer_fravaer():
     )
 
 
-# Viser alt registrert fravær
+# Viser alt fravær
 @app.route("/fravaer")
 def fravaer():
     if "bruker_id" not in session:
@@ -347,11 +361,14 @@ def fravaer():
     return render_template("fravaer.html", fravaer=fravaer_liste)
 
 
-# Enkel admin-side
+# Admin-side
 @app.route("/admin")
 def admin():
     if "bruker_id" not in session:
         return redirect("/login")
+
+    if not er_admin():
+        return redirect("/dashboard")
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -380,11 +397,141 @@ def admin():
 
 
 # FAQ-side
-@app.route("/faq")
+@app.route("/faq", methods=["GET", "POST"])
 def faq():
-    return render_template("faq.html")
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    if request.method == "POST":
+        navn = request.form["navn"]
+        epost = request.form["epost"]
+        sporsmal = request.form["sporsmal"]
+
+        cursor.execute("""
+            INSERT INTO faq_sporsmal (navn, epost, sporsmal, status)
+            VALUES (?, ?, ?, ?)
+        """, (navn, epost, sporsmal, "ny"))
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return redirect("/faq")
+
+    cursor.execute("""
+        SELECT id, sporsmal, svar, status
+        FROM faq_sporsmal
+        WHERE status = 'besvart'
+        ORDER BY opprettet DESC
+    """)
+
+    faq_liste = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template("faq.html", faq_liste=faq_liste)
 
 
-# Starter Flask-appen
+# Admin FAQ-side
+@app.route("/admin/faq")
+def admin_faq():
+    if "bruker_id" not in session:
+        return redirect("/login")
+
+    if not er_admin():
+        return redirect("/dashboard")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT *
+        FROM faq_sporsmal
+        ORDER BY opprettet DESC
+    """)
+
+    sporsmal_liste = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template("admin_faq.html", sporsmal=sporsmal_liste)
+
+
+# Admin svarer på FAQ-spørsmål
+@app.route("/admin/faq/svar/<int:id>", methods=["POST"])
+def svar_faq(id):
+    if "bruker_id" not in session:
+        return redirect("/login")
+
+    if not er_admin():
+        return redirect("/dashboard")
+
+    svar = request.form["svar"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE faq_sporsmal
+        SET svar = ?, status = 'besvart'
+        WHERE id = ?
+    """, (svar, id))
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/admin/faq")
+
+
+# Admin anonymiserer FAQ-spørsmål
+@app.route("/admin/faq/slett/<int:id>")
+def slett_faq(id):
+    if "bruker_id" not in session:
+        return redirect("/login")
+
+    if not er_admin():
+        return redirect("/dashboard")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT navn, epost
+        FROM faq_sporsmal
+        WHERE id = ?
+    """, (id,))
+
+    person = cursor.fetchone()
+
+    if person:
+        navn_hash = hash_text(person["navn"])
+        epost_hash = hash_text(person["epost"])
+
+        cursor.execute("""
+            UPDATE faq_sporsmal
+            SET 
+                navn = 'ANONYMISERT',
+                epost = 'ANONYMISERT',
+                navn_hash = ?,
+                epost_hash = ?,
+                er_slettet = TRUE,
+                status = 'slettet'
+            WHERE id = ?
+        """, (navn_hash, epost_hash, id))
+
+        conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/admin/faq")
+
+
+# Starter appen
 if __name__ == "__main__":
     app.run(debug=True)
