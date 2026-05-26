@@ -7,18 +7,28 @@
 </head>
 <body>
 
-    <nav>
-        <h2>Skole fraværssystem</h2>
+<nav>
+    <h2>Skole-fravær</h2>
 
-        <div>
-            <a href="/">Hjem</a>
-            <a href="/elever">Elever</a>
-            <a href="/legg-til-elev">Legg til elev</a>
-            <a href="/registrer-fravaer">Registrer fravær</a>
-            <a href="/fravaer">Fravær</a>
-            <a href="/faq">FAQ</a>
-        </div>
-    </nav>
+    <div>
+        <a href="/">Hjem</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/elever">Elever</a>
+        <a href="/legg-til-elev">Legg til elev</a>
+        <a href="/registrer-fravaer">Registrer fravær</a>
+        <a href="/fravaer">Fravær</a>
+        <a href="/admin">Admin</a>
+        <a href="/admin/faq">FAQ admin</a>
+        <a href="/faq">FAQ</a>
+
+        {% if session.get("bruker_id") %}
+            <a href="/logout">Logg ut</a>
+        {% else %}
+            <a href="/login">Logg inn</a>
+            <a href="/register">Registrer</a>
+        {% endif %}
+    </div>
+</nav>
 
     <main>
         {% block content %}
