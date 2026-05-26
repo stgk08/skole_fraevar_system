@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Admin FAQ{% endblock %}
+
+{% block content %}
+
+<h1>Admin - FAQ spørsmål</h1>
+
+<p>
+    Her kan du se spørsmål som brukere har sendt inn. Du kan svare på spørsmål,
+    eller anonymisere personinformasjon hvis spørsmålet skal slettes.
+</p>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Navn</th>
+        <th>E-post</th>
+        <th>Spørsmål</th>
+        <th>Svar</th>
+        <th>Status</th>
+        <th>Handling</th>
+    </tr>
+
+    {% for s in sporsmal %}
+    <tr>
+        <td>{{ s.id }}</td>
+        <td>{{ s.navn }}</td>
+        <td>{{ s.epost }}</td>
+        <td>{{ s.sporsmal }}</td>
+        <td>
+            {% if s.svar %}
+                {{ s.svar }}
+            {% else %}
+                Ikke besvart
+            {% endif %}
+        </td>
+        <td>{{ s.status }}</td>
+        <td>
+            {% if not s.er_slettet %}
+                <form method="POST" action="/admin/faq/svar/{{ s.id }}">
+                    <textarea name="svar" placeholder="Skriv svar her" required></textarea>
+                    <button type="submit">Svar</button>
+                </form>
+
+                <a class="delete-btn" href="/admin/faq/slett/{{ s.id }}" onclick="return confirmDelete()">
+                    Anonymiser
+                </a>
+            {% else %}
+                Personinfo anonymisert
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
