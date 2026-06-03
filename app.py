@@ -2,19 +2,21 @@ from flask import Flask, render_template, request, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import mariadb
 import hashlib
+from waitress import serve
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 app = Flask(__name__)
-
-# Brukes for login-session
 app.secret_key = "superhemmeligkey123"
 
 # Databasekobling
 def get_db_connection():
     return mariadb.connect(
-        host="10.200.14.18",
-        user="webuser",
-        password="IMIKuben1337!",
-        database="skole_fravaer_db",
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
 
 
@@ -30,12 +32,22 @@ def hash_text(text):
 def er_admin():
     return session.get("rolle") == "admin"
 
+# Sjekker om brukeren er laerer
+def er_laerer():
+    return session.get("rolle") == "laerer"
+
+# Sjekker om brukeren er elev
+def er_elev():
+    return session.get("rolle") == "elev"
+
+# Sjekker om brukeren er enden laerer eller admin
+def er_laerer_eller_admin():
+    return session.get("rolle") in ["laerer", "admin"]
 
 # Forside
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 # Registrer bruker
 @app.route("/register", methods=["GET", "POST"])
@@ -51,12 +63,11 @@ def register():
 
         try:
             cursor.execute("""
-                INSERT INTO brukere (brukernavn, passord_hash, rolle)
-                VALUES (?, ?, ?)
-            """, (brukernavn, passord_hash, "bruker"))
+                INSERT INTO brukere (brukernavn, passord_hash, rolle, klasse)
+                VALUES (?, ?, ?, ?)
+            """, (brukernavn, passord_hash, "elev", "Ingen klasse"))
 
             conn.commit()
-
             cursor.close()
             conn.close()
 
@@ -151,6 +162,9 @@ def dashboard():
 def elever():
     if "bruker_id" not in session:
         return redirect("/login")
+    
+    if not er_laerer_eller_admin:
+        return redirect("/dashboard")
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -179,6 +193,9 @@ def elever():
 def legg_til_elev():
     if "bruker_id" not in session:
         return redirect("/login")
+    
+    if not er_laerer_eller_admin:
+        return redirect("/dashboard")
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -214,6 +231,9 @@ def legg_til_elev():
 def slett_elev(id):
     if "bruker_id" not in session:
         return redirect("/login")
+    
+    if not er_laerer_eller_admin:
+        return redirect("/dashboard")
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -234,7 +254,10 @@ def slett_elev(id):
 def elev_detaljer(id):
     if "bruker_id" not in session:
         return redirect("/login")
-
+    
+    if not er_laerer_eller_admin:
+        return redirect("/dashboard")
+    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -280,6 +303,9 @@ def elev_detaljer(id):
 def registrer_fravaer():
     if "bruker_id" not in session:
         return redirect("/login")
+    
+    if not er_laerer_eller_admin:
+        return redirect("/dashboard")
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -328,12 +354,13 @@ def registrer_fravaer():
         fag=fag_liste
     )
 
-
 # Viser alt fravær
 @app.route("/fravaer")
 def fravaer():
     if "bruker_id" not in session:
         return redirect("/login")
+    
+    innlogget_elev_id = session["bruker_id"]
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -350,8 +377,9 @@ def fravaer():
         FROM fravaer
         JOIN elever ON fravaer.elev_id = elever.id
         JOIN fag ON fravaer.fag_id = fag.id
+        WHERE elever.id = %s
         ORDER BY fravaer.dato DESC
-    """)
+    """, (innlogget_elev_id,))
 
     fravaer_liste = cursor.fetchall()
 
@@ -360,16 +388,85 @@ def fravaer():
 
     return render_template("fravaer.html", fravaer=fravaer_liste)
 
+# Route for å redigere fravær
+@app.route("/rediger-fravaer/<int:id>", methods = ["POST", "GET"])
+def rediger_fravaer(id):
+    if "bruker_id" not in session:
+        return redirect("/login")
+    
+    if er_laerer not in session:
+        return redirect("/dashboard")
+    
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    if request.method == "POST":
+        dato = request.form["dato"],
+        status = request.form["status"],
+        kommentar = request.form["kommentar"]
+    
+        cursor.execute("""
+            UPDATE fravaer
+            SET dato = ?, status = ?, kommentar = ?
+            WHERE id = ?
+            """, (dato, status, kommentar, id))
+    
+        conn.commit()
+        cursor.close()
+        conn.close()
+    
+        return redirect("/fravaer")
+
+    cursor.execute("""
+        SELECT FROM fravaer
+        WHERE id = ?
+        """, (id,))
+
+    fravaer = cursor.fetchone()
+    
+    cursor.close()
+    conn.close()
+    
+    return render_template(
+        "rediger_fravaer.html",
+        fravaer = fravaer
+    )
+    
+        
+# Route for å slette fravær
+@app.route("/slett-fravaer/<int:id>")
+def slett_fravaer(id):
+    if "bruker_id" not in session:
+        return redirect("/login")
+
+    if not er_laerer in session:
+        return redirect("/dashboard")
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM fravaer
+        WHERE id = ?
+    """, (id,))
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/fravaer")
+
 
 # Admin-side
 @app.route("/admin")
 def admin():
     if "bruker_id" not in session:
         return redirect("/login")
-
-    if not er_admin():
+    
+    if not er_admin in session:
         return redirect("/dashboard")
-
+    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -440,9 +537,6 @@ def admin_faq():
     if "bruker_id" not in session:
         return redirect("/login")
 
-    if not er_admin():
-        return redirect("/dashboard")
-
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -465,8 +559,8 @@ def admin_faq():
 def svar_faq(id):
     if "bruker_id" not in session:
         return redirect("/login")
-
-    if not er_admin():
+    
+    if er_admin not in session:
         return redirect("/dashboard")
 
     svar = request.form["svar"]
@@ -493,9 +587,6 @@ def svar_faq(id):
 def slett_faq(id):
     if "bruker_id" not in session:
         return redirect("/login")
-
-    if not er_admin():
-        return redirect("/dashboard")
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -531,7 +622,6 @@ def slett_faq(id):
 
     return redirect("/admin/faq")
 
-
-# Starter appen
+#Starte appen med Waitress
 if __name__ == "__main__":
-    app.run(debug=True)
+    serve(app, host="0.0.0.0", port=5000)
