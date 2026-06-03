@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h1>Rediger fravær</h1>
+
+    <form method="POST">
+
+        <label>Dato</label>
+        <input type="date"
+               name="dato"
+               value="{{ fravaer.dato }}"
+               required>
+
+        <label>Status</label>
+        <select name="status">
+
+            <option value="Fravær"
+                {% if fravaer.status == "Fravær" %}
+                    selected
+                {% endif %}>
+                Fravær
+            </option>
+
+            <option value="Forsinket"
+                {% if fravaer.status == "Forsinket" %}
+                    selected
+                {% endif %}>
+                Forsinket
+            </option>
+
+        </select>
+
+        <label>Kommentar</label>
+
+        <textarea name="kommentar">{{ fravaer.kommentar }}</textarea>
+
+        <button type="submit">
+            Lagre endringer
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
